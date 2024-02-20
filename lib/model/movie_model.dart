@@ -3,6 +3,7 @@ class Movie {
   late String title;
   late String director;
   late int year;
+  late String summary;
   late List<String> genres;
 
   Movie({
@@ -10,6 +11,7 @@ class Movie {
     required this.title,
     required this.director,
     required this.year,
+    required this.summary,
     required this.genres,
   });
 }

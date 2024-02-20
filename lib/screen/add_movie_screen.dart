@@ -16,8 +16,10 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
   String? title;
   String? director;
   int? year;
-  List<String>? genres = [];
+  List<String>? genres;
+  String? summary;
   Movie? movie;
+  bool isEmptyGenres = false;
 
   List<String> availableGenres = [
     'Action',
@@ -37,12 +39,23 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
     'title': 'Please enter a title',
     'director': 'Please enter a director',
     'year': 'Please enter a year',
+    'summary': 'Please enter a summary',
+    'genres': 'Please select a genres',
   };
+
+  @override
+  void initState() {
+    super.initState();
+    genres = movie?.genres != null ? movie!.genres : [];
+  }
 
   @override
   Widget build(BuildContext context) {
     movie = ModalRoute.of(context)!.settings.arguments as Movie?;
-    genres = movie?.genres ?? [];
+
+    if (movie?.genres != null) {
+      genres = movie!.genres;
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -58,13 +71,15 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
             onPressed: () {
               movie == null ? Navigator.pop(context) : _deleteMovie(context);
             },
-            icon: movie == null ?  const Icon(Icons.close) : const Icon(Icons.delete_forever),
+            icon: movie == null
+                ? const Icon(Icons.close)
+                : const Icon(Icons.delete_forever),
           ),
           IconButton(
             onPressed: () {
-              _saveMovie(context); // Save the movie
+              _saveMovie(context);
             },
-            icon: const Icon(Icons.check), // Add a Check icon for Save
+            icon: const Icon(Icons.check),
           ),
         ],
       ),
@@ -77,8 +92,13 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
-                  initialValue: movie?.title ?? '', // Set initial value
-                  decoration: const InputDecoration(labelText: 'Title'),
+                  initialValue: movie?.title ?? '',
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return errorMessages['title'];
@@ -91,9 +111,15 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                     });
                   },
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
-                  initialValue: movie?.director ?? '', // Set initial value
-                  decoration: const InputDecoration(labelText: 'Director'),
+                  initialValue: movie?.director ?? '',
+                  decoration: InputDecoration(
+                    labelText: 'Director',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return errorMessages['director'];
@@ -106,10 +132,15 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                     });
                   },
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
-                  initialValue:
-                      movie?.year.toString() ?? '', // Set initial value
-                  decoration: const InputDecoration(labelText: 'Year'),
+                  initialValue: movie?.year.toString() ?? '',
+                  decoration: InputDecoration(
+                    labelText: 'Year',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -123,33 +154,71 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                     });
                   },
                 ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  initialValue: movie?.summary ?? '', // Set initial value
+                  maxLines: 6,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: 'Summary',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return errorMessages['summary'];
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      summary = value;
+                    });
+                  },
+                ),
                 const SizedBox(height: 20),
                 const Text('Genres:'),
                 Wrap(
-                  children: availableGenres
-                      .map(
-                        (genre) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (genres!.contains(genre)) {
-                                  genres!.remove(genre);
-                                } else {
-                                  genres!.add(genre);
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: genres!.contains(genre)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                            child: Text(genre),
+                  children: availableGenres.map((genre) {
+                    final isSelected = genres!.contains(genre);
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (isSelected) {
+                              genres!.remove(genre);
+                            } else {
+                              genres!.add(genre);
+                              isEmptyGenres = false;
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? ThemeData().primaryColor
+                              : ThemeData().dialogBackgroundColor,
+                          side: BorderSide(
+                            color:
+                                isEmptyGenres ? Colors.red : Colors.transparent,
+                            width: 2.0, // Adjust border width as needed
                           ),
                         ),
-                      )
-                      .toList(),
+                        child: Text(
+                          genre,
+                          style: TextStyle(
+                            color: isSelected
+                                ? ThemeData().indicatorColor
+                                : isEmptyGenres
+                                    ? Colors.red
+                                    : ThemeData().unselectedWidgetColor,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 20),
               ],
@@ -174,6 +243,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               title: title!,
               director: director!,
               year: year!,
+              summary: summary!,
               genres: genres!),
         );
       } else {
@@ -181,6 +251,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         title = title ?? movie?.title;
         director = director ?? movie?.director;
         year = year ?? movie?.year;
+        summary = summary ?? movie?.summary;
         genres = genres ?? movie?.genres;
 
         movieProvider.editMovie(
@@ -189,6 +260,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
               title: title!,
               director: director!,
               year: year!,
+              summary: summary!,
               genres: genres!),
         );
       }
@@ -234,7 +306,15 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
     if (year == null || year == 0) {
       errors.add(errorMessages['year']!);
     }
-
+    if (summary == null || summary!.isEmpty) {
+      errors.add(errorMessages['summary']!);
+    }
+    if (genres!.isEmpty) {
+      errors.add(errorMessages['genres']!);
+      setState(() {
+        isEmptyGenres = true;
+      });
+    }
     if (errors.isNotEmpty) {
       return errors.join('\n');
     }

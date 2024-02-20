@@ -29,10 +29,11 @@ class _MovieListScreenState extends State<MovieListScreen> {
         itemCount: movies.length,
         itemBuilder: (context, index) {
           return Card(
-            elevation: 4, // Add elevation for a card-like appearance
+            elevation: 4,
             child: InkWell(
               onTap: () {
-                Navigator.pushNamed(context, '/addMovie', arguments: movies[index]);
+                Navigator.pushNamed(context, '/addMovie',
+                    arguments: movies[index]);
               },
               child: ListTile(
                 title: Text(movies[index].title),
