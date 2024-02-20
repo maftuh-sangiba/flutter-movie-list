@@ -45,7 +45,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
     genres = movie?.genres ?? [];
 
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: IconThemeData(color: ThemeData().canvasColor),
         backgroundColor: ThemeData().primaryColor,
@@ -56,9 +56,9 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              _deleteMovie(context); // Discard the changes
+              movie == null ? Navigator.pop(context) : _deleteMovie(context);
             },
-            icon: const Icon(Icons.close), // Add a Close icon for Discard
+            icon: movie == null ?  const Icon(Icons.close) : const Icon(Icons.delete_forever),
           ),
           IconButton(
             onPressed: () {
@@ -107,7 +107,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                   },
                 ),
                 TextFormField(
-                  initialValue: movie?.year.toString() ?? '', // Set initial value
+                  initialValue:
+                      movie?.year.toString() ?? '', // Set initial value
                   decoration: const InputDecoration(labelText: 'Year'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
