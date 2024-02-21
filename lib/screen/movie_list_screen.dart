@@ -19,14 +19,26 @@ class _MovieListScreenState extends State<MovieListScreen> {
     super.initState();
     _searchController = TextEditingController();
     final movieProvider = Provider.of<MovieProvider>(context, listen: false);
-    filteredMovies =
-        List.of(movieProvider.movies);
+    filteredMovies = List.of(movieProvider.movies);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateFilteredMovies(Provider.of<MovieProvider>(context).movies);
+  }
+
+  void _updateFilteredMovies(List<Movie> movies) {
+    final String query = _searchController.text.toLowerCase();
+    setState(() {
+      filteredMovies = movies.where((movie) => movie.title.toLowerCase().contains(query)).toList();
+    });
   }
 
   void _filterMovies(String query, List<Movie> movies) {
@@ -59,7 +71,8 @@ class _MovieListScreenState extends State<MovieListScreen> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
-              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: _searchController,
               onChanged: (value) => _filterMovies(value, movies),
               decoration: InputDecoration(

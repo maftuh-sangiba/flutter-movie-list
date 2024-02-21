@@ -16,7 +16,7 @@ List<Movie> moviesData = [
     director: 'Francis Ford Coppola',
     year: 1972,
     summary:
-        'An organized crime dynasty\'s aging patriarch transfers control of his clandestine empire to his reluctant son.',
+        'Organized crime dynasty\'s aging patriarch transfers control his clandestine empire to his reluctant',
     genres: ['Action', 'Sci-Fi'],
   ),
   Movie(
@@ -61,7 +61,7 @@ List<Movie> moviesData = [
     director: 'Quentin Tarantino',
     year: 1994,
     summary:
-        'The lives of mob hitmen, a boxer, a gangster, and others intertwine in tales of violence and redemption.',
+        'The lives of mob hitmen, a boxer, a gangster, and others intertwine in tales of violence.',
     genres: ['Action', 'Sci-Fi'],
   ),
   Movie(
