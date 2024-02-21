@@ -60,6 +60,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: IconThemeData(color: ThemeData().canvasColor),
         backgroundColor: ThemeData().primaryColor,
         title: Text(
@@ -79,22 +80,30 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
             onPressed: () {
               _saveMovie(context);
             },
-            icon: const Icon(Icons.check),
+            icon: const Icon(Icons.save),
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   initialValue: movie?.title ?? '',
                   decoration: InputDecoration(
                     labelText: 'Title',
+                    hintText: 'Input movie title',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: ThemeData().disabledColor,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -113,9 +122,17 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   initialValue: movie?.director ?? '',
                   decoration: InputDecoration(
                     labelText: 'Director',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: 'Input movie director',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: ThemeData().disabledColor,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -134,9 +151,17 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   initialValue: movie?.year.toString() ?? '',
                   decoration: InputDecoration(
                     labelText: 'Year',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: 'Input movie year',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: ThemeData().disabledColor,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -156,11 +181,20 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
-                  initialValue: movie?.summary ?? '', // Set initial value
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                  initialValue: movie?.summary ?? '',
                   maxLines: 6,
                   keyboardType: TextInputType.multiline,
+                  maxLength: 100,
                   decoration: InputDecoration(
                     labelText: 'Summary',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: 'Input movie summary',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: ThemeData().disabledColor,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -178,7 +212,13 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-                const Text('Genres:'),
+                Text(
+                  'Genres :',
+                  style: TextStyle(
+                      fontSize: 13,
+                      color:
+                          isEmptyGenres ? Colors.red : ThemeData().hintColor),
+                ),
                 Wrap(
                   children: availableGenres.map((genre) {
                     final isSelected = genres!.contains(genre);
@@ -203,7 +243,7 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                           side: BorderSide(
                             color:
                                 isEmptyGenres ? Colors.red : Colors.transparent,
-                            width: 2.0, // Adjust border width as needed
+                            width: 2.0,
                           ),
                         ),
                         child: Text(
